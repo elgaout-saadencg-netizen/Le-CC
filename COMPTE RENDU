@@ -1,0 +1,102 @@
+# 🔎 Analyse Exploratoire – Détection de Transactions Frauduleuses
+
+## 1. Introduction
+Cette analyse vise à explorer un dataset de transactions bancaires afin d’identifier les comportements associés à la fraude. Le jeu de données contient des informations sur les montants, les types d’opérations, les balances des comptes et une variable cible indiquant si la transaction est frauduleuse ou non.
+
+---
+
+## 2. Description du Jeu de Données
+
+### Colonnes principales :
+- **step** : unité de temps (1 = 1 heure)
+- **type** : type de transaction (CASH_OUT, TRANSFER, PAYMENT…)
+- **amount** : montant de la transaction
+- **oldbalanceOrg / newbalanceOrg** : solde avant / après pour l’émetteur
+- **oldbalanceDest / newbalanceDest** : solde avant / après pour le destinataire
+- **isFraud** : 1 = fraude, 0 = normal
+
+### Dimensions :
+- Nombre d’observations : *N*
+- Nombre de variables : *M*
+
+---
+
+## 3. Qualité des Données
+
+### Valeurs manquantes
+Aucune valeur manquante critique n’est détectée.
+
+### Types des données
+- Numériques : montants, balances
+- Catégorielles : type
+
+### Particularités
+- Colonnes de balances parfois incohérentes (indices potentiels de fraude)
+- Variable cible fortement déséquilibrée
+
+---
+
+## 4. Analyse Univariée
+
+### Variable cible : `isFraud`
+- La proportion de transactions frauduleuses est très faible (**fort déséquilibre**).
+- Cela rend la détection plus difficile et nécessite des techniques adaptées.
+
+### Distribution des montants
+- Les transactions frauduleuses ont en général des montants plus élevés.
+- La majorité des transactions normales ont de faibles montants.
+
+---
+
+## 5. Analyse Bivariée
+
+### Type de transaction et fraude
+- **CASH_OUT** et **TRANSFER** : fortement associés aux fraudes.
+- **PAYMENT** et **DEBIT** : rarement frauduleux.
+
+### Balances d’origine / destination
+- `oldbalanceDest` = `newbalanceDest` dans de nombreux cas frauduleux → activité suspecte.
+- Les balances de l’émetteur présentent souvent des incohérences.
+
+---
+
+## 6. Corrélations
+
+- Montant ↔ Fraude : corrélation positive.
+- Type ↔ Fraude : très forte relation.
+- Balances ↔ Fraude : indicateurs partiels mais utiles.
+
+---
+
+## 7. Préparation des Données
+
+Étapes appliquées :
+1. Encodage de la variable catégorielle **type**
+2. Normalisation des montants
+3. Gestion du déséquilibre (ex. : SMOTE, undersampling)
+4. Séparation Train/Test (80/20)
+
+---
+
+## 8. Modélisation
+
+### Modèles testés :
+- Régression Logistique
+- Random Forest
+- XGBoost
+- SVM
+- KNN
+
+### Résultats
+Les modèles basés sur les arbres (**Random Forest**, **XGBoost**) offrent les meilleures performances, notamment un bon compromis entre précision et rappel.
+
+---
+
+## 9. Conclusion
+
+- Le dataset présente des schémas clairs permettant la détection de fraude.
+- Le principal défi est le **déséquilibre des classes**.
+- Les variables les plus importantes sont : **type**, **amount**, **balances**.
+- Les modèles Random Forest et XGBoost sont les plus efficaces.
+- Une bonne détection doit maximiser le **rappel** pour réduire les fraudes non détectées.
+
